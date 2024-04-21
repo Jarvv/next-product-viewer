@@ -6,9 +6,11 @@ export const buttonStyles = cva([''], {
   variants: {
     variant: {
       default: 'bg-highlight text-white',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
     },
     size: {
       default: 'h-10 px-4 py-2',
+      icon: 'h-5 w-5 rounded-full',
     },
   },
   defaultVariants: {

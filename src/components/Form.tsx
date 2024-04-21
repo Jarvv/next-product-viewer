@@ -1,0 +1,127 @@
+'use client'
+
+import { ProductPayload } from '@/lib/schema'
+import { FieldError, UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form'
+import { useState } from 'react'
+import Image from 'next/image'
+import { deleteFromStorage, uploadToStorage } from '@/lib/storage'
+
+interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  type: string
+  label: string
+  placeholder: string
+  name: keyof ProductPayload
+  register: UseFormRegister<ProductPayload>
+  error: FieldError | undefined
+}
+
+interface FileFormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  name: keyof ProductPayload
+  label: string
+  register: UseFormRegister<ProductPayload>
+  error: FieldError | undefined
+  acceptedFileType: 'image/png' | 'model/gltf-binary'
+  setValue: UseFormSetValue<ProductPayload>
+  getValues: UseFormGetValues<ProductPayload>
+}
+
+export const FormField = ({
+  type,
+  label,
+  placeholder,
+  name,
+  register,
+  error,
+  ...props
+}: FormFieldProps) => {
+  return (
+    <>
+      <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+        {label}
+      </label>
+      <input type={type} placeholder={placeholder} {...register(name)} {...props} />
+      {error && <span className='text-sm font-medium text-destructive'>{error.message}</span>}
+    </>
+  )
+}
+
+export const FileFormField = ({
+  label,
+  error,
+  name,
+  acceptedFileType,
+  setValue,
+  getValues,
+  ...props
+}: FileFormFieldProps) => {
+  const [preview, setPreview] = useState<string>()
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file: File | null = e.target.files ? e.target.files[0] : null
+
+    if (name === 'image' && getValues('image.path') !== null)
+      deleteFromStorage({ fileName: getValues('image.path'), bucket: 'images' })
+    if (name === 'model' && getValues('model.path') !== null)
+      deleteFromStorage({ fileName: getValues('model.path'), bucket: 'models' })
+
+    if (file) {
+      if (acceptedFileType === 'image/png') {
+        setPreview(URL.createObjectURL(file))
+
+        const response = await uploadToStorage({ file, bucket: 'images' })
+
+        if (response.status === 'ok') {
+          setValue('image', response.data, {
+            shouldValidate: true,
+          })
+        }
+      } else {
+        const response = await uploadToStorage({ file, bucket: 'models' })
+
+        if (response.status === 'ok') {
+          setValue('model', response.data, {
+            shouldValidate: true,
+          })
+        }
+      }
+    }
+  }
+
+  return (
+    <>
+      <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+        {label}
+      </label>
+      <input
+        name={name}
+        type='file'
+        accept={acceptedFileType}
+        onChange={handleChange}
+        className='block w-full text-sm text-muted-foreground
+          file:mr-4 file:py-2 file:px-4 file:rounded-md
+          file:border-0 file:text-sm file:font-semibold
+          file:bg-highlight file:text-white
+          hover:file:bg-highlight-100'
+        {...props}
+      />
+      {preview !== undefined && (
+        <div
+          className='inline-flex border border-gray-200 rounded-sm mb-2 mr-2 w-[200px] h-[200px] p-1 box-border'
+          key={preview}
+        >
+          <Image
+            alt='Image upload'
+            src={preview}
+            width={200}
+            height={200}
+            className='block w-auto h-full'
+            onLoad={() => {
+              URL.revokeObjectURL(preview)
+            }}
+          />
+        </div>
+      )}
+      {error && <span className='text-sm font-medium text-destructive'>{error.message}</span>}
+    </>
+  )
+}
