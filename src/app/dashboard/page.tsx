@@ -26,6 +26,11 @@ export default async function Dashboard() {
     },
   })
 
+  products.map((product) => {
+    const { data } = supabase.storage.from('images').getPublicUrl(product.imageUrl)
+    product.imageUrl = data.publicUrl
+  })
+
   return (
     <div className='flex-1 w-full flex flex-col gap-20 items-center'>
       <Heading title='Your Products' />
