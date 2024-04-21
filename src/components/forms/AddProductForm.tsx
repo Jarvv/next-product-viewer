@@ -90,7 +90,7 @@ export const AddProductForm = () => {
         setValue={setValue}
         getValues={getValues}
       />
-      <Button>Add Product</Button>
+      <Button disabled={isLoading}>Add Product</Button>
     </form>
   )
 }

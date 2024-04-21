@@ -46,8 +46,8 @@ export async function POST(req: NextRequest) {
         slug: slug,
         description: description,
         price: price,
-        imageUrl: image.path,
-        modelUrl: model.path,
+        imageUrl: image,
+        modelUrl: model,
         userId: user.id,
       },
     })

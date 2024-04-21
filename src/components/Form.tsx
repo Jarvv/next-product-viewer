@@ -18,7 +18,6 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 interface FileFormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: keyof ProductPayload
   label: string
-  register: UseFormRegister<ProductPayload>
   error: FieldError | undefined
   acceptedFileType: 'image/png' | 'model/gltf-binary'
   setValue: UseFormSetValue<ProductPayload>
@@ -32,6 +31,7 @@ export const FormField = ({
   name,
   register,
   error,
+  disabled,
   ...props
 }: FormFieldProps) => {
   return (
@@ -39,7 +39,13 @@ export const FormField = ({
       <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
         {label}
       </label>
-      <input type={type} placeholder={placeholder} {...register(name)} {...props} />
+      <input
+        type={type}
+        placeholder={placeholder}
+        {...register(name)}
+        {...props}
+        disabled={disabled}
+      />
       {error && <span className='text-sm font-medium text-destructive'>{error.message}</span>}
     </>
   )
@@ -52,6 +58,7 @@ export const FileFormField = ({
   acceptedFileType,
   setValue,
   getValues,
+  disabled,
   ...props
 }: FileFormFieldProps) => {
   const [preview, setPreview] = useState<string>()
@@ -59,10 +66,10 @@ export const FileFormField = ({
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file: File | null = e.target.files ? e.target.files[0] : null
 
-    if (name === 'image' && getValues('image.path') !== null)
-      deleteFromStorage({ fileName: getValues('image.path'), bucket: 'images' })
-    if (name === 'model' && getValues('model.path') !== null)
-      deleteFromStorage({ fileName: getValues('model.path'), bucket: 'models' })
+    if (name === 'image' && getValues('image') !== null)
+      deleteFromStorage({ fileName: getValues('image'), bucket: 'images' })
+    if (name === 'model' && getValues('model') !== null)
+      deleteFromStorage({ fileName: getValues('model'), bucket: 'models' })
 
     if (file) {
       if (acceptedFileType === 'image/png') {
@@ -71,7 +78,7 @@ export const FileFormField = ({
         const response = await uploadToStorage({ file, bucket: 'images' })
 
         if (response.status === 'ok') {
-          setValue('image', response.data, {
+          setValue('image', response.data!.path, {
             shouldValidate: true,
           })
         }
@@ -79,7 +86,7 @@ export const FileFormField = ({
         const response = await uploadToStorage({ file, bucket: 'models' })
 
         if (response.status === 'ok') {
-          setValue('model', response.data, {
+          setValue('model', response.data!.path, {
             shouldValidate: true,
           })
         }
@@ -103,6 +110,7 @@ export const FileFormField = ({
           file:bg-highlight file:text-white
           hover:file:bg-highlight-100'
         {...props}
+        disabled={disabled}
       />
       {preview !== undefined && (
         <div

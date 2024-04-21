@@ -22,16 +22,9 @@ export const ProductSchema = z.object({
     .max(1000, {
       message: 'Price must be lower than or equal to £10',
     }),
-  image: z.object({
-    fullPath: z.string(),
-    path: z.string(),
-    id: z.string(),
-  }),
-  model: z.object({
-    fullPath: z.string(),
-    path: z.string(),
-    id: z.string(),
-  }),
+  image: z.string(),
+
+  model: z.string(),
 })
 
 export type ProductPayload = z.infer<typeof ProductSchema>
