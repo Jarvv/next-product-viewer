@@ -1,18 +1,27 @@
 'use client'
 
-import { ProductPayload } from '@/lib/schema'
+import { LoginPayload, ProductPayload } from '@/lib/schema'
 import { FieldError, UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form'
 import { useState } from 'react'
 import Image from 'next/image'
 import { deleteFromStorage, uploadToStorage } from '@/lib/storage'
 
-interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  type: string
-  label: string
-  placeholder: string
+interface ProductFormFieldProps extends InputProps {
   name: keyof ProductPayload
   register: UseFormRegister<ProductPayload>
   error: FieldError | undefined
+}
+
+interface LoginFormFieldProps extends InputProps {
+  name: keyof LoginPayload
+  register: UseFormRegister<LoginPayload>
+  error: FieldError | undefined
+}
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  type: string
+  label: string
+  placeholder: string
 }
 
 interface FileFormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -24,7 +33,7 @@ interface FileFormFieldProps extends React.InputHTMLAttributes<HTMLInputElement>
   getValues: UseFormGetValues<ProductPayload>
 }
 
-export const FormField = ({
+export const ProductFormField = ({
   type,
   label,
   placeholder,
@@ -33,7 +42,34 @@ export const FormField = ({
   error,
   disabled,
   ...props
-}: FormFieldProps) => {
+}: ProductFormFieldProps) => {
+  return (
+    <>
+      <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+        {label}
+      </label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        {...register(name)}
+        {...props}
+        disabled={disabled}
+      />
+      {error && <span className='text-sm font-medium text-destructive'>{error.message}</span>}
+    </>
+  )
+}
+
+export const LoginFormField = ({
+  type,
+  label,
+  placeholder,
+  name,
+  register,
+  error,
+  disabled,
+  ...props
+}: LoginFormFieldProps) => {
   return (
     <>
       <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>

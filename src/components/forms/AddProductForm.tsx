@@ -2,7 +2,7 @@
 
 import { ProductPayload, ProductSchema } from '@/lib/schema'
 import { useForm } from 'react-hook-form'
-import { FormField, FileFormField } from '@/components/Form'
+import { ProductFormField, FileFormField } from '@/components/Form'
 import { Button } from '@/components/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
@@ -45,7 +45,7 @@ export const AddProductForm = () => {
 
   return (
     <form className='grid w-full max-w-xl gap-5' onSubmit={handleSubmit(onSubmit)}>
-      <FormField
+      <ProductFormField
         type='text'
         label='Name'
         placeholder='Product Name'
@@ -54,7 +54,7 @@ export const AddProductForm = () => {
         error={errors.name}
         disabled={isLoading}
       />
-      <FormField
+      <ProductFormField
         type='text'
         label='Description'
         placeholder='Product Description'
@@ -63,7 +63,7 @@ export const AddProductForm = () => {
         error={errors.description}
         disabled={isLoading}
       />
-      <FormField
+      <ProductFormField
         type='number'
         label='Price'
         placeholder='0'

@@ -33,7 +33,7 @@ export const deleteFromStorage = async ({ fileName, bucket }: DeleteProps) => {
 
     const { data, error } = await supabase.storage.from(bucket).remove([fileName])
 
-    if (error) throw new Error('Failed to upload')
+    if (error) throw new Error('Failed to delete')
 
     return { status: 'ok', data: data }
   } catch (error) {

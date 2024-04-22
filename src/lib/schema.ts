@@ -28,3 +28,12 @@ export const ProductSchema = z.object({
 })
 
 export type ProductPayload = z.infer<typeof ProductSchema>
+
+export const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, {
+    message: 'Invalid password',
+  }),
+})
+
+export type LoginPayload = z.infer<typeof LoginSchema>
