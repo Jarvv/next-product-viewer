@@ -7,6 +7,7 @@ export const buttonStyles = cva([''], {
     variant: {
       default: 'bg-highlight text-white',
       destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      ghost: 'hover:bg-accent hover:text-accent-foreground',
     },
     size: {
       default: 'h-10 px-4 py-2',
