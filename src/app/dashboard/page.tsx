@@ -6,7 +6,7 @@ import { ProductCard } from '@/components/cards/ProductCard'
 import Link from 'next/link'
 import { Heading } from '@/components/Heading'
 
-export default async function Dashboard() {
+export default async function DashboardPage() {
   const supabase = createClient()
 
   const {
@@ -32,12 +32,17 @@ export default async function Dashboard() {
   })
 
   return (
-    <div className='flex-1 w-full flex flex-col gap-20 items-center'>
-      <Heading title='Your Products' />
+    <>
+      {/* {products.length > 0 && (
+        <Link className={buttonStyles()} href='/dashboard/products/new'>
+          Create product
+        </Link>
+      )} */}
+
       {products.length > 0 ? (
         <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product!} />
           ))}
         </section>
       ) : (
@@ -48,6 +53,6 @@ export default async function Dashboard() {
           </Link>
         </section>
       )}
-    </div>
+    </>
   )
 }
