@@ -1,18 +1,16 @@
-import { Skeleton } from '@/components/skeletons/Skeleton'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/Card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 export const CardSkeleton = () => {
   return (
-    <Card className='p-5 rounded-2xl sm:w-[360px] w-full'>
-      <CardHeader className='relative w-full h-[230px]'>
-        <Skeleton className='w-full h-full rounded-2xl' />
+    <Card>
+      <CardHeader>
+        <Skeleton className='h-4 w-1/2' />
+        <Skeleton className='h-4 w-1/2' />
       </CardHeader>
       <CardContent>
         <Skeleton className='h-4 w-1/2' />
       </CardContent>
-      <CardFooter>
-        <Skeleton className='h-4 w-1/4' />
-      </CardFooter>
     </Card>
   )
 }

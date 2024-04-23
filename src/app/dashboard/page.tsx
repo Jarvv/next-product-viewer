@@ -1,10 +1,40 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import prisma from '@/lib/prisma'
+import { formatNumber, formatPrice } from '@/lib/utils'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import prisma from '@/lib/prisma'
-import { buttonStyles } from '@/components/Button'
-import { ProductCard } from '@/components/cards/ProductCard'
-import Link from 'next/link'
-import { Heading } from '@/components/Heading'
+import { resolve } from 'path'
+
+interface DashboardCardProps {
+  title: string
+  subtitle: string
+  body: string
+}
+
+const getOrderData = async (userId: string) => {
+  const orderData = await prisma.order.aggregate({
+    where: {
+      userId: userId,
+    },
+    _sum: { pricePaid: true },
+    _count: true,
+  })
+
+  return {
+    amount: (orderData._sum.pricePaid || 0) / 100,
+    sales: orderData._count,
+  }
+}
+
+const getProductData = async (userId: string) => {
+  const productData = await prisma.product.count({
+    where: {
+      userId: userId,
+    },
+  })
+
+  return productData.toString()
+}
 
 export default async function DashboardPage() {
   const supabase = createClient()
@@ -13,46 +43,34 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) {
-    return redirect('/login')
-  }
+  if (!user) return redirect('/login')
 
-  const products = await prisma.product.findMany({
-    where: {
-      userId: user.id,
-    },
-    orderBy: {
-      created_at: 'desc',
-    },
-  })
+  const orderData = await getOrderData(user.id)
 
-  products.map((product) => {
-    const { data } = supabase.storage.from('images').getPublicUrl(product.imageUrl)
-    product.imageUrl = data.publicUrl
-  })
+  const productData = await getProductData(user.id)
 
   return (
-    <>
-      {/* {products.length > 0 && (
-        <Link className={buttonStyles()} href='/dashboard/products/new'>
-          Create product
-        </Link>
-      )} */}
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+      <DashboardCard title='Products' subtitle='Your products' body={productData} />
+      <DashboardCard
+        title='Orders'
+        subtitle={`${formatPrice(orderData.sales)} Orders`}
+        body={formatNumber(orderData.amount)}
+      />
+    </div>
+  )
+}
 
-      {products.length > 0 ? (
-        <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product!} />
-          ))}
-        </section>
-      ) : (
-        <section className='flex h-[50vh] text-center gap-4 flex-col items-center justify-center'>
-          <h2 className='font-semibold text-2xl'>You dont have any products</h2>
-          <Link className={buttonStyles()} href='/dashboard/products/new'>
-            Create a new product
-          </Link>
-        </section>
-      )}
-    </>
+const DashboardCard = ({ title, subtitle, body }: DashboardCardProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{subtitle}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>{body}</p>
+      </CardContent>
+    </Card>
   )
 }

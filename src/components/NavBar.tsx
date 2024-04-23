@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 export const NavBar = ({ user }) => {
-  console.log(user)
   return (
     <header className='sticky top-0 z-50 w-full border-b bg-background'>
       <nav className='container  flex items-center '>

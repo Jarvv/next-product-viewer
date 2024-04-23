@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <NavBar user={user} />
         <div className='flex min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <main className='flex pt-6 md:pl-10 w-full'>{children}</main>
+          <main className='flex pt-6 w-full'>{children}</main>
         </div>
         <Footer />
       </body>

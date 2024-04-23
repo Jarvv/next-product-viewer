@@ -18,8 +18,21 @@ model Product {
   slug        String
   imageUrl    String
   modelUrl    String
-  userId      String  @db.Uuid
-  price       Int     @db.SmallInt
+  userId      String   @db.Uuid
+  price       Int      @db.SmallInt
+  order       Order[]
 
   @@map("product")
+}
+
+model Order {
+  id         String   @id @db.Uuid
+  pricePaid  Int      @db.SmallInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  userId     String   @db.Uuid
+  productId  String?  @db.Uuid
+  product    Product? @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "public_order_productId_fkey")
+
+  @@map("order")
 }
