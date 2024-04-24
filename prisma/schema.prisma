@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Product {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  name        String
+  description String
+  slug        String @unique
+  imageUrl    String
+  modelUrl    String
+  userId      String   @db.Uuid
+  price       Int      @db.SmallInt
+  orders       Order[]
+
+  @@map("product")
+}
+
+model Order {
+  id         String   @id @db.Uuid
+  pricePaid  Int      @db.SmallInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  userId     String   @db.Uuid
+  productId  String?  @db.Uuid
+  product    Product? @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "public_order_productId_fkey")
+
+  @@map("order")
+}
