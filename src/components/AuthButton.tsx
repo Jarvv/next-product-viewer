@@ -2,8 +2,13 @@
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { User } from '@supabase/supabase-js'
 
-export const AuthButton = ({ user }) => {
+interface AuthButtonProps {
+  user: User | null
+}
+
+export const AuthButton = ({ user }: AuthButtonProps) => {
   const signOut = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()

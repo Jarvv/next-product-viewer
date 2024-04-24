@@ -5,8 +5,13 @@ import { ComponentProps } from 'react'
 import { AuthButton } from './AuthButton'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { User } from '@supabase/supabase-js'
 
-export const NavBar = ({ user }) => {
+interface NavBarProps {
+  user: User | null
+}
+
+export const NavBar = ({ user }: NavBarProps) => {
   return (
     <header className='sticky top-0 z-50 w-full border-b bg-background'>
       <nav className='container  flex items-center '>
