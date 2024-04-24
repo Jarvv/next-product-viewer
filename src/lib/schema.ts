@@ -9,21 +9,18 @@ export const ProductSchema = z.object({
     .max(50, {
       message: 'Name must contain at most 50 characters',
     }),
-  description: z.string().max(500, {
-    message: 'Description must contain at most 500 characters',
+  description: z.string().max(100, {
+    message: 'Description must contain at most 100 characters',
   }),
   price: z.coerce
     .number({
       required_error: 'Price must be filled',
     })
-    .min(100, {
+    .int()
+    .min(1, {
       message: 'Price must be greater than or equal to £1',
-    })
-    .max(1000, {
-      message: 'Price must be lower than or equal to £10',
     }),
   image: z.string(),
-
   model: z.string(),
 })
 

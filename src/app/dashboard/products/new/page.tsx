@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/Card'
-import { AddProductForm } from '@/components/forms/AddProductForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AddProductForm } from '@/app/dashboard/products/_components/AddProductForm'
 
 export default function NewProductPage() {
   return (

@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { ProductSchema } from '@/lib/schema'
 import prisma from '@/lib/prisma'
+import { deleteFromStorage } from '@/lib/storage'
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,8 +26,6 @@ export async function POST(req: NextRequest) {
     const slug = slugify(name, {
       lower: true,
     })
-
-    console.log(slug)
 
     const productExists = await prisma.product.findFirst({
       where: {
@@ -58,8 +57,43 @@ export async function POST(req: NextRequest) {
       return new Response('Invalid request data passed', { status: 422 })
     }
 
-    console.log(error)
+    return new Response('Could not create product, please try again later.', {
+      status: 500,
+    })
+  }
+}
 
+export async function DELETE(req: NextRequest) {
+  try {
+    const supabase = createClient()
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return Response.json({ error: 'unauthorised' }, { status: 401 })
+    }
+
+    const requestBody = await req.json()
+
+    const product = await prisma.product.delete({ where: { id: requestBody.id } })
+
+    if (product == null) {
+      return new Response('Product does not exist.', {
+        status: 409,
+      })
+    }
+
+    await deleteFromStorage({ fileName: product.imageUrl, bucket: 'images' })
+
+    await deleteFromStorage({ fileName: product.modelUrl, bucket: 'models' })
+
+    return Response.json(product)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new Response('Invalid request data passed', { status: 422 })
+    }
     return new Response('Could not create product, please try again later.', {
       status: 500,
     })

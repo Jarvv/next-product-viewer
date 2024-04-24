@@ -3,7 +3,6 @@ import prisma from '@/lib/prisma'
 import { formatNumber, formatPrice } from '@/lib/utils'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { resolve } from 'path'
 
 interface DashboardCardProps {
   title: string

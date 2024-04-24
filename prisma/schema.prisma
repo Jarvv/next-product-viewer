@@ -20,7 +20,7 @@ model Product {
   modelUrl    String
   userId      String   @db.Uuid
   price       Int      @db.SmallInt
-  order       Order[]
+  orders       Order[]
 
   @@map("product")
 }

@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/client'
-import { getRandomFileName } from '@/utils/utils'
+import { getRandomFileName } from '@/lib/utils'
 
 interface UploadProps {
   file: File

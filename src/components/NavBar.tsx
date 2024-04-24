@@ -14,7 +14,7 @@ export const NavBar = ({ user }) => {
         {user && (
           <>
             <NavLink href={'/dashboard'}>Dashboard</NavLink>
-            <NavLink href={'/products'}>Products</NavLink>
+            <NavLink href={'/dashboard/products'}>Products</NavLink>
           </>
         )}
         <AuthButton user={user} />{' '}
