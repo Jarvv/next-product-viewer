@@ -125,7 +125,6 @@ export const ProductForm = ({ product }: { product?: Product | null }) => {
                   name='images'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}
-                  onRemove={() => field.onChange()}
                 />
               </FormControl>
               <FormMessage />
@@ -144,7 +143,6 @@ export const ProductForm = ({ product }: { product?: Product | null }) => {
                   name='models'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}
-                  onRemove={() => field.onChange()}
                 />
               </FormControl>
               <FormMessage />
