@@ -1,19 +1,33 @@
 'use client'
+
 import { LoginPayload, LoginSchema } from '@/lib/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { LoginFormField } from '@/components/Form'
-import { SubmitButton } from '@/app/login/submit-button'
-import { navigate } from '@/app/actions'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { navigate } from '@/app/actions'
+import { Separator } from '../ui/separator'
 
 export const LoginForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginPayload>({
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [signUp, setSignUp] = useState<boolean>(false)
+
+  const form = useForm<LoginPayload>({
     resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   })
 
   const onLogin = async (payload: LoginPayload) => {
@@ -32,6 +46,8 @@ export const LoginForm = () => {
       return navigate('/dashboard')
     } catch (error) {
       return navigate('/login?error=Could not authenticate user')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -59,44 +75,97 @@ export const LoginForm = () => {
     }
   }
 
-  return (
-    <form className='grid w-full max-w-xl gap-5'>
-      <LoginFormField
-        type='email'
-        label='Email'
-        placeholder='Email'
-        name='email'
-        register={register}
-        error={errors.email}
-      />
-      <LoginFormField
-        type='password'
-        label='Password'
-        placeholder='••••••••'
-        name='password'
-        register={register}
-        error={errors.password}
-      />
-      <SubmitButton
-        className='bg-highlight rounded-md px-4 py-2 text-background mb-2'
-        pendingText='Signing In...'
-        onClick={(e) => {
-          e.preventDefault()
-          handleSubmit(onLogin)()
-        }}
+  return signUp ? (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSignup)}>
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem className='py-4'>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder='Email' type='email' disabled={isLoading} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem className='py-4'>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder='••••••••' type='password' disabled={isLoading} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button isLoading={isLoading} className='my-8'>
+          Sign Up
+          <span className='sr-only'>Sig Up</span>
+        </Button>
+      </form>
+      <Separator />
+      <p>Already have an account?</p>
+      <Button
+        variant={'secondary'}
+        isLoading={isLoading}
+        className='my-2'
+        onClick={() => setSignUp(false)}
       >
-        Sign In
-      </SubmitButton>
-      <SubmitButton
-        className='border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2'
-        pendingText='Signing Up...'
-        onClick={(e) => {
-          e.preventDefault()
-          handleSubmit(onSignup)()
-        }}
+        Log in
+        <span className='sr-only'>Log in</span>
+      </Button>
+    </Form>
+  ) : (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onLogin)}>
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem className='py-4'>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder='Email' type='email' disabled={isLoading} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem className='py-4'>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder='••••••••' type='password' disabled={isLoading} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button isLoading={isLoading} className='my-8'>
+          Login
+          <span className='sr-only'>Login</span>
+        </Button>
+      </form>
+      <Separator />
+      <p>Dont have an account?</p>
+      <Button
+        variant={'secondary'}
+        isLoading={isLoading}
+        className='my-2'
+        onClick={() => setSignUp(true)}
       >
         Sign Up
-      </SubmitButton>
-    </form>
+        <span className='sr-only'>Sign Up</span>
+      </Button>
+    </Form>
   )
 }
