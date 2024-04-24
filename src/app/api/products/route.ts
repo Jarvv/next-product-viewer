@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import slugify from 'slugify'
 
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { ProductSchema } from '@/lib/schema'
 import prisma from '@/lib/prisma'
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return Response.json({ error: 'unauthorised' }, { status: 401 })
+      return new NextResponse('Unauthorised', { status: 401 })
     }
 
     const requestBody = await req.json()
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (productExists) {
-      return new Response('Product with the same name exists in this store.', {
+      return new NextResponse('Product with the same name exists in this store.', {
         status: 409,
       })
     }
@@ -54,10 +54,72 @@ export async function POST(req: NextRequest) {
     return Response.json(product)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new Response('Invalid request data passed', { status: 422 })
+      return new NextResponse('Invalid request data passed', { status: 422 })
     }
 
-    return new Response('Could not create product, please try again later.', {
+    return new NextResponse('Could not create product, please try again later.', {
+      status: 500,
+    })
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const supabase = createClient()
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return new NextResponse('Unauthorised', { status: 401 })
+    }
+
+    const requestBody = await req.json()
+
+    const { id, name, description, price, image, model } = ProductSchema.parse(requestBody)
+
+    console.log(id)
+
+    const slug = slugify(name, {
+      lower: true,
+    })
+
+    const isProductExist = await prisma.product.findFirst({
+      where: {
+        id: id,
+      },
+    })
+
+    if (!isProductExist) {
+      return new NextResponse('Product not found.', {
+        status: 404,
+      })
+    }
+
+    await prisma.product.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+        description,
+        slug,
+        price,
+        imageUrl: image,
+        modelUrl: model,
+      },
+    })
+
+    return new NextResponse('OK')
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new NextResponse('Invalid request data passed', { status: 422 })
+    }
+
+    console.log(error)
+
+    return new NextResponse('Could not update product, please try again later.', {
       status: 500,
     })
   }
@@ -72,7 +134,7 @@ export async function DELETE(req: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return Response.json({ error: 'unauthorised' }, { status: 401 })
+      return new NextResponse('Unauthorised', { status: 401 })
     }
 
     const requestBody = await req.json()
@@ -80,7 +142,7 @@ export async function DELETE(req: NextRequest) {
     const product = await prisma.product.delete({ where: { id: requestBody.id } })
 
     if (product == null) {
-      return new Response('Product does not exist.', {
+      return new NextResponse('Product does not exist.', {
         status: 409,
       })
     }
@@ -92,9 +154,9 @@ export async function DELETE(req: NextRequest) {
     return Response.json(product)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new Response('Invalid request data passed', { status: 422 })
+      return new NextResponse('Invalid request data passed', { status: 422 })
     }
-    return new Response('Could not create product, please try again later.', {
+    return new NextResponse('Could not create product, please try again later.', {
       status: 500,
     })
   }

@@ -15,7 +15,7 @@ model Product {
   updated_at  DateTime @updatedAt
   name        String
   description String
-  slug        String
+  slug        String @unique
   imageUrl    String
   modelUrl    String
   userId      String   @db.Uuid

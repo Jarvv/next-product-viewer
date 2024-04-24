@@ -36,6 +36,7 @@ const ProductsTable = async () => {
       id: true,
       name: true,
       price: true,
+      slug: true,
       _count: { select: { orders: true } },
     },
     orderBy: { created_at: 'desc' },
@@ -72,12 +73,12 @@ const ProductsTable = async () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <a download href={`/admin/products/${product.id}/download`}>
+                    <a download href={`/dashboard/products/${product.slug}/download`}>
                       Download
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/edit`}>Edit</Link>
+                    <Link href={`/dashboard/products/${product.slug}/edit`}>Edit</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />

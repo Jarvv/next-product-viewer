@@ -18,29 +18,37 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FileUpload } from './FileUpload'
 import { useRouter } from 'next/navigation'
+import { Product } from '@prisma/client'
 
-export const AddProductForm = () => {
+export const ProductForm = ({ product }: { product?: Product | null }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
 
   const form = useForm<ProductPayload>({
     resolver: zodResolver(ProductSchema),
+    defaultValues: {
+      name: product?.name,
+      description: product?.description,
+      price: product?.price,
+      id: product?.id,
+      image: product?.imageUrl,
+      model: product?.modelUrl,
+    },
   })
 
   const onSubmit = async (payload: ProductPayload) => {
     try {
       setIsLoading(true)
-      const response = await fetch('/api/products', {
-        method: 'POST',
+
+      await fetch('/api/products', {
+        method: product ? 'PATCH' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       })
 
-      const data = await response.json()
-
-      router.push(`/dashboard/products/${data.slug}`)
+      router.push(`/dashboard/products/`)
     } catch (error) {
       console.error(error)
     } finally {
@@ -113,6 +121,7 @@ export const AddProductForm = () => {
               <FormLabel>Image</FormLabel>
               <FormControl>
                 <FileUpload
+                  defaultValue={product?.imageUrl}
                   name='images'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}
@@ -131,6 +140,7 @@ export const AddProductForm = () => {
               <FormLabel>Model</FormLabel>
               <FormControl>
                 <FileUpload
+                  defaultValue={product?.modelUrl}
                   name='models'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}
@@ -142,8 +152,8 @@ export const AddProductForm = () => {
           )}
         />
         <Button isLoading={isLoading} className='my-8'>
-          Add Product
-          <span className='sr-only'>Add Product</span>
+          Save
+          <span className='sr-only'>Save</span>
         </Button>
       </form>
     </Form>
