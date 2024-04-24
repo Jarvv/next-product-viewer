@@ -4,7 +4,6 @@ import { deleteFromStorage, uploadToStorage } from '@/lib/storage'
 
 interface FileUploadProps {
   onChange: (value: string) => void
-  onRemove: () => void
   value?: string
   name: 'images' | 'models'
   defaultValue: string | undefined
