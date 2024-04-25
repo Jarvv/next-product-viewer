@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ComponentProps } from 'react'
-import { AuthButton } from './AuthButton'
+import { AuthNav } from './AuthNav'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { User } from '@supabase/supabase-js'
@@ -13,16 +13,13 @@ interface NavBarProps {
 
 export const NavBar = ({ user }: NavBarProps) => {
   return (
-    <header className='sticky top-0 z-50 w-full border-b bg-background'>
-      <nav className='container  flex items-center '>
-        <NavLink href={'/'}>Home</NavLink>
-        {user && (
-          <>
-            <NavLink href={'/dashboard'}>Dashboard</NavLink>
-            <NavLink href={'/dashboard/products'}>Products</NavLink>
-          </>
-        )}
-        <AuthButton user={user} />{' '}
+    <header className='sticky top-0 z-50 w-full border-b bg-background  py-3'>
+      <nav className='container flex items-center justify-between'>
+        <div>
+          <NavLink href={'/'}>Home</NavLink>
+          <NavLink href={'/products'}>Products</NavLink>
+        </div>
+        <AuthNav user={user} />
       </nav>
     </header>
   )
