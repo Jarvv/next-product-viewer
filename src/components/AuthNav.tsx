@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { User as UserIcon, LogOut, LayoutDashboard, ShoppingBag } from 'lucide-react'
+import { User as UserIcon, LogOut, LayoutDashboard, ShoppingBag, Barcode } from 'lucide-react'
 import { navigate } from '@/app/actions'
 
 interface AuthNavProps {
@@ -53,7 +53,7 @@ export const AuthNav = ({ user }: AuthNavProps) => {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='/dashboard/products'>
-              <ShoppingBag className='mr-2 h-4 w-4' aria-hidden='true' />
+              <Barcode className='mr-2 h-4 w-4' aria-hidden='true' />
               My Products
             </Link>
           </DropdownMenuItem>
