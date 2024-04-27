@@ -46,8 +46,7 @@ export const ProductModelViewer = ({ imageUrl, modelUrl }: ProductModelViewerPro
       camera-orbit='10deg 80deg 80m'
       tone-mapping='neutral'
       alt='3D Model Viewer'
-      data-ar
-      ar-modes='webxr scene-viewer quick-look'
+      ar
     >
       {showError && <div>AR is not supported on this device</div>}
     </model-viewer>
