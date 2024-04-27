@@ -63,7 +63,7 @@ const ProductsTable = async () => {
         {products.map((product) => (
           <TableRow key={product.id}>
             <TableCell>{product.name}</TableCell>
-            <TableCell>{formatPrice(product.price / 100)}</TableCell>
+            <TableCell>{formatPrice(product.price)}</TableCell>
             <TableCell>{formatNumber(product._count.orders)}</TableCell>
             <TableCell>
               <DropdownMenu>

@@ -17,7 +17,9 @@ model Product {
   description String
   slug        String @unique
   imageUrl    String
+  imageKey    String
   modelUrl    String
+  modelKey    String
   userId      String   @db.Uuid
   price       Int      @db.SmallInt
   orders       Order[]

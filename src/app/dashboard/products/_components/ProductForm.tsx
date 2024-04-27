@@ -31,8 +31,8 @@ export const ProductForm = ({ product }: { product?: Product | null }) => {
       description: product?.description,
       price: product?.price,
       id: product?.id,
-      image: product?.imageUrl,
-      model: product?.modelUrl,
+      image: product?.imageKey,
+      model: product?.modelKey,
     },
   })
 
@@ -121,7 +121,7 @@ export const ProductForm = ({ product }: { product?: Product | null }) => {
               <FormLabel>Image</FormLabel>
               <FormControl>
                 <FileUpload
-                  defaultValue={product?.imageUrl}
+                  defaultValue={product?.imageKey}
                   name='images'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}
@@ -139,7 +139,7 @@ export const ProductForm = ({ product }: { product?: Product | null }) => {
               <FormLabel>Model</FormLabel>
               <FormControl>
                 <FileUpload
-                  defaultValue={product?.modelUrl}
+                  defaultValue={product?.modelKey}
                   name='models'
                   value={field.value}
                   onChange={(file) => (field.value ? field.onChange(file) : field.onChange(file))}

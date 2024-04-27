@@ -26,9 +26,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
       <Card className='flex flex-col shadow-sm hover:shadow-lg duration-300 transition-all'>
         <div className='relative w-full h-auto aspect-video'>
           <Image
-            src={
-              'https://qhqtctclhwhqsozqmfzg.supabase.co/storage/v1/object/public/images/lvdzdwv506do66u5dpg5.png'
-            }
+            src={product.imageUrl}
             fill
             sizes='200'
             alt={product.name}
@@ -37,7 +35,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
         </div>
         <CardHeader>
           <CardTitle>{product.name}</CardTitle>
-          <CardDescription>{formatPrice(product.price / 100)}</CardDescription>
+          <CardDescription>{formatPrice(product.price)}</CardDescription>
         </CardHeader>
         <CardContent className='px-4 space-y-3 pb-6'>{product.description}</CardContent>
         <CardFooter className='flex justify-end'>

@@ -39,14 +39,19 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    const imageData = await supabase.storage.from('images').getPublicUrl(image)
+    const modelData = await supabase.storage.from('models').getPublicUrl(model)
+
     const product = await prisma.product.create({
       data: {
         name: name,
         slug: slug,
         description: description,
         price: price,
-        imageUrl: image,
-        modelUrl: model,
+        imageKey: image,
+        imageUrl: imageData.data.publicUrl,
+        modelKey: model,
+        modelUrl: modelData.data.publicUrl,
         userId: user.id,
       },
     })
@@ -79,22 +84,31 @@ export async function PATCH(req: NextRequest) {
 
     const { id, name, description, price, image, model } = ProductSchema.parse(requestBody)
 
-    console.log(id)
-
     const slug = slugify(name, {
       lower: true,
     })
 
-    const isProductExist = await prisma.product.findFirst({
+    const product = await prisma.product.findFirst({
       where: {
         id: id,
       },
     })
 
-    if (!isProductExist) {
+    if (!product) {
       return new NextResponse('Product not found.', {
         status: 404,
       })
+    }
+
+    const imageResponse = await supabase.storage.from('images').getPublicUrl(image)
+    const imageUrl = imageResponse.data.publicUrl
+    const modelResponse = await supabase.storage.from('models').getPublicUrl(model)
+    const modelUrl = modelResponse.data.publicUrl
+
+    if (image !== product.imageKey) {
+    }
+
+    if (model != product.modelKey) {
     }
 
     await prisma.product.update({
@@ -106,8 +120,10 @@ export async function PATCH(req: NextRequest) {
         description,
         slug,
         price,
-        imageUrl: image,
-        modelUrl: model,
+        imageKey: image,
+        modelKey: model,
+        imageUrl,
+        modelUrl,
       },
     })
 
