@@ -29,6 +29,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang='en'>
+      <head>
+        <script
+          async
+          type='module'
+          src='https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js'
+        ></script>
+      </head>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <NavBar user={user} />
         <div className='flex min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>

@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/server'
 import { ProductSchema } from '@/lib/schema'
 import prisma from '@/lib/prisma'
 import { deleteFromStorage } from '@/lib/storage'
+import { revalidatePath } from 'next/cache'
 
 export async function POST(req: NextRequest) {
   try {
@@ -55,6 +56,9 @@ export async function POST(req: NextRequest) {
         userId: user.id,
       },
     })
+
+    revalidatePath('/')
+    revalidatePath('/products')
 
     return Response.json(product)
   } catch (error) {
@@ -127,6 +131,9 @@ export async function PATCH(req: NextRequest) {
       },
     })
 
+    revalidatePath('/')
+    revalidatePath('/products')
+
     return new NextResponse('OK')
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -166,6 +173,9 @@ export async function DELETE(req: NextRequest) {
     await deleteFromStorage({ fileName: product.imageUrl, bucket: 'images' })
 
     await deleteFromStorage({ fileName: product.modelUrl, bucket: 'models' })
+
+    revalidatePath('/')
+    revalidatePath('/products')
 
     return Response.json(product)
   } catch (error) {
