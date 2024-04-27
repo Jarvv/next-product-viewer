@@ -4,6 +4,7 @@ import { NavBar } from '@/components/NavBar'
 import { Footer } from '@/components/Footer'
 import { createClient } from '@/utils/supabase/server'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/toaster'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main className='flex pt-6 w-full'>{children}</main>
         </div>
         <Footer />
+        <Toaster />
       </body>
     </html>
   )

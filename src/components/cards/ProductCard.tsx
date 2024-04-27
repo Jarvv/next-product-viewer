@@ -15,10 +15,14 @@ import Image from 'next/image'
 import { Button } from '../ui/button'
 import { ShoppingCart } from 'lucide-react'
 import { MouseEventHandler } from 'react'
+import useCart from '@/hooks/useCart'
 
 export const ProductCard = ({ product }: { product: Product }) => {
+  const cart = useCart()
+
   const onAddToCart: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
+    cart.addItem(product)
   }
 
   return (
