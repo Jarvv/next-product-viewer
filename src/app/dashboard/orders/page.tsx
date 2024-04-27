@@ -1,61 +1,52 @@
 import { Heading } from '@/components/Heading'
-import { buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import prisma from '@/lib/prisma'
-import { formatNumber, formatPrice } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import { MoreVertical } from 'lucide-react'
-import Link from 'next/link'
-import { DeleteDropdownItem } from './_components/ProductActions'
 import { createClient } from '@/utils/supabase/server'
 
-export default function ProductsPage() {
+export default function OrdersPage() {
   return (
     <>
       <div className='flex justify-between items-center gap-4'>
-        <Heading title='Products' />
-        <Link className={buttonVariants()} href='/dashboard/products/new'>
-          Add Product
-        </Link>
+        <Heading title='My Orders' />
       </div>
       <Separator className='my-4' />
-      <ProductsTable />
+      <OrdersTable />
     </>
   )
 }
 
-const ProductsTable = async () => {
+const OrdersTable = async () => {
   const supabase = createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const products = await prisma.product.findMany({
+  const orders = await prisma.order.findMany({
     where: {
-      userId: user!.id,
+      userId: user?.id,
     },
     select: {
       id: true,
-      name: true,
-      price: true,
-      slug: true,
-      _count: { select: { orders: true } },
+      pricePaid: true,
+      product: { select: { name: true, modelUrl: true } },
     },
     orderBy: { created_at: 'desc' },
   })
 
-  if (products.length === 0)
+  if (orders.length === 0)
     return (
       <div className='flex flex-col items-center'>
-        <p>No products found</p>
+        <p>No orders found</p>
       </div>
     )
 
@@ -63,35 +54,28 @@ const ProductsTable = async () => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead>Orders</TableHead>
+          <TableHead>Product</TableHead>
+          <TableHead>Price Paid</TableHead>
           <TableHead className='w-0'>
             <span className='sr-only'>Actions</span>
           </TableHead>
         </TableRow>
-        {products.map((product) => (
-          <TableRow key={product.id}>
-            <TableCell>{product.name}</TableCell>
-            <TableCell>{formatPrice(product.price)}</TableCell>
-            <TableCell>{formatNumber(product._count.orders)}</TableCell>
+        {orders.map((order) => (
+          <TableRow key={order.id}>
+            <TableCell>{order.product.name}</TableCell>
+            <TableCell>{formatPrice(order.pricePaid)}</TableCell>
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <MoreVertical />
-                  <span className='sr-only'>{product.name} Actions</span>
+                  <span className='sr-only'>{order.id} Actions</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <a download href={`/dashboard/products/${product.slug}/download`}>
+                    <a download href={order.product.modelUrl}>
                       Download
                     </a>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={`/dashboard/products/${product.slug}/edit`}>Edit</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>

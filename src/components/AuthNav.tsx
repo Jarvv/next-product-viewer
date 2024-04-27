@@ -7,11 +7,19 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { User as UserIcon, LogOut, LayoutDashboard, ShoppingBag, Barcode } from 'lucide-react'
+import {
+  User as UserIcon,
+  LogOut,
+  LayoutDashboard,
+  ShoppingBag,
+  Barcode,
+  PoundSterling,
+} from 'lucide-react'
 import { navigate } from '@/app/actions'
 
 interface AuthNavProps {
@@ -45,6 +53,7 @@ export const AuthNav = ({ user }: AuthNavProps) => {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
+          <DropdownMenuLabel>Admin</DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link href='/dashboard'>
               <LayoutDashboard className='mr-2 h-4 w-4' aria-hidden='true' />
@@ -57,6 +66,16 @@ export const AuthNav = ({ user }: AuthNavProps) => {
               My Products
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href='/dashboard/sales'>
+              <PoundSterling className='mr-2 h-4 w-4' aria-hidden='true' />
+              My Sales
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Personal</DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link href='/dashboard/orders'>
               <ShoppingBag className='mr-2 h-4 w-4' aria-hidden='true' />

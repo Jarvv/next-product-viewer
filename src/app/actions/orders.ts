@@ -7,7 +7,7 @@ export const userOrderExists = async (email: string, productId: string) => {
     (await prisma.order.findFirst({
       where: {
         profile: {
-          users: { email },
+          user: { email },
         },
         productId,
       },

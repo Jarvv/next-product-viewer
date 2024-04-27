@@ -104,6 +104,11 @@ const StripeForm = ({ totalPrice, productId }: { totalPrice: number; productId: 
       .confirmPayment({
         elements,
         confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              email: user.email,
+            },
+          },
           return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/payments/success`,
         },
       })

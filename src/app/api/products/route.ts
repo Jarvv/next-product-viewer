@@ -95,6 +95,7 @@ export async function PATCH(req: NextRequest) {
     const product = await prisma.product.findFirst({
       where: {
         id: id,
+        userId: user.id,
       },
     })
 
