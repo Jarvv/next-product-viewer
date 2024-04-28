@@ -7,6 +7,7 @@
 - **Auth:** Supabase
 - **Storage:** Supabase
 - **ORM:** Prisma ORM
+- **Payments:** Stripe
 
 ## Credits
 
