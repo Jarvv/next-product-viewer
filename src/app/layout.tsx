@@ -4,6 +4,7 @@ import { NavBar } from '@/components/NavBar'
 import { Footer } from '@/components/Footer'
 import { createClient } from '@/utils/supabase/server'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/toaster'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,12 +30,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang='en'>
+      <head>
+        <script
+          async
+          type='module'
+          src='https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js'
+        ></script>
+      </head>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <NavBar user={user} />
         <div className='flex min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <main className='flex pt-6 w-full'>{children}</main>
         </div>
         <Footer />
+        <Toaster />
       </body>
     </html>
   )

@@ -13,14 +13,14 @@ interface DashboardCardProps {
 const getOrderData = async (userId: string) => {
   const orderData = await prisma.order.aggregate({
     where: {
-      userId: userId,
+      product: { userId: userId },
     },
     _sum: { pricePaid: true },
     _count: true,
   })
 
   return {
-    amount: (orderData._sum.pricePaid || 0) / 100,
+    amount: orderData._sum.pricePaid || 0,
     sales: orderData._count,
   }
 }
@@ -52,9 +52,9 @@ export default async function DashboardPage() {
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
       <DashboardCard title='Products' subtitle='Your products' body={productData} />
       <DashboardCard
-        title='Orders'
-        subtitle={`${formatPrice(orderData.sales)} Orders`}
-        body={formatNumber(orderData.amount)}
+        title='Sales'
+        subtitle={`${formatNumber(orderData.sales)} sales`}
+        body={formatPrice(orderData.amount)}
       />
     </div>
   )
